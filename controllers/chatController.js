@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const Chat = require("../models/ChatModel");
+const Chat = require("../models/chatModel");
 const User = require("../models/usersModel");
 const Message = require("../models/messageModel");
 
@@ -141,15 +141,15 @@ const addMemberToGroup = asyncHandler(async (req, res) => {
     { $push: { users: userId } },
     { new: true }
   )
-  .populate("users", "-password")
+    .populate("users", "-password")
     .populate("groupAdmin", "-password");
 
-    if(!added){
-      res.status(400);
-      throw new Error( "User already in this Group or Group does not exist!");
-    }else{
-      res.json(added) ;
-    }
+  if (!added) {
+    res.status(400);
+    throw new Error("User already in this Group or Group does not exist!");
+  } else {
+    res.json(added);
+  }
 });
 
 const removeMemberFromGroup = asyncHandler(async (req, res) => {
@@ -159,15 +159,22 @@ const removeMemberFromGroup = asyncHandler(async (req, res) => {
     { $pull: { users: userId } },
     { new: true }
   )
-  .populate("users", "-password")
+    .populate("users", "-password")
     .populate("groupAdmin", "-password");
 
-    if(!removed){
-      res.status(400);
-      throw new Error( "User not in this Group or Group does not exist!");
-    }else{
-      res.json(removed) ;
-    }
+  if (!removed) {
+    res.status(400);
+    throw new Error("User not in this Group or Group does not exist!");
+  } else {
+    res.json(removed);
+  }
 });
 
-module.exports = { accessChat, fetchChats, createGroupChat, renameGroup,addMemberToGroup,removeMemberFromGroup };
+module.exports = {
+  accessChat,
+  fetchChats,
+  createGroupChat,
+  renameGroup,
+  addMemberToGroup,
+  removeMemberFromGroup,
+};
