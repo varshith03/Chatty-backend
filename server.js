@@ -55,21 +55,52 @@ io.on("connection", (socket) => {
   socket.on("typing", (roomID) => socket.in(roomID).emit("typing"));
   socket.on("stop typing", (roomID) => socket.in(roomID).emit("stop typing"));
 
-  socket.on("new message", (newMessageReceived) => {
-    var chat = newMessageReceived.chat;
+  // socket.on("new message", (newMessageReceived) => {
+  //   var chat = newMessageReceived.chat;
 
-    if (!chat.users) return;
+  //   if (!chat.users) return;
 
-    chat.users.forEach((user) => {
-      if (user._id == newMessageReceived.sender._id) return;
+  //   chat.users.forEach((user) => {
+  //     if (user._id == newMessageReceived.sender._id) return;
 
-      socket.in(user._id).emit("message received", newMessageReceived);
-    });
+  //     socket.in(user._id).emit("message received", newMessageReceived);
+  //   });
+  // });
+
+  socket.on("new message", (messageData) => {
+    const { sender, content, chat } = messageData;
+
+    // Emit the message to the appropriate group or user
+    if (chat.isGroupChat) {
+      // Emit message to all sockets in the chat except the sender's socket
+      const senderID = sender._id;
+      chat.users.forEach((user) => {
+        if (user._id !== senderID) {
+          socket.to(user._id).emit("message received", {
+            sender,
+            content,
+            chat,
+          });
+        }
+      });
+    } else {
+      // For one-on-one chat, emit message to the receiver only
+      const receiverID = chat.users.find(
+        (user) => user._id !== sender._id
+      )?._id;
+      if (receiverID) {
+        socket.to(receiverID).emit("message received", {
+          sender,
+          content,
+          chat,
+        });
+      }
+    }
   });
 
-  socket.off("setup", () => {
-    console.log("user dicconnected");
-    // socket.disconnect();
+  socket.off("setup", (userData) => {
+    console.log("user disconnected");
     socket.leave(userData._id);
+    socket.disconnect();
   });
 });
