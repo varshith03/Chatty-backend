@@ -32,6 +32,37 @@ const sendMessage = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Upload image
+// @route   POST /api/upload-image
+// @access  Protected
+const uploadImage = asyncHandler(async (req, res) => {
+  const { chatId, imageURL } = req.body;
+
+  try {
+    var newMessage = {
+      sender: req.user._id,
+      image: imageURL,
+      chat: chatId,
+    };
+
+    var message = await Message.create(newMessage);
+
+    message = await message.populate("sender", "name profile_pic");
+    message = await message.populate("chat");
+    message = await User.populate(message, {
+      path: "chat.users",
+      select: "profile_pic name email",
+    });
+
+    await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
+
+    res.json(message);
+  } catch (error) {
+    res.status(400);
+    throw new Error(error.message);
+  }
+});
+
 //@description     Get all Messages
 //@route           GET /api/Message/:chatId
 //@access          Protected
@@ -48,4 +79,4 @@ const allMessages = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { sendMessage, allMessages };
+module.exports = { sendMessage, allMessages, uploadImage };
