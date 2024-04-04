@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
   // });
 
   socket.on("new message", (messageData) => {
-    const { sender, content, chat } = messageData;
+    const { sender, content, image, chat } = messageData;
 
     // Emit the message to the appropriate group or user
     if (chat.isGroupChat) {
@@ -79,6 +79,7 @@ io.on("connection", (socket) => {
           socket.to(user._id).emit("message received", {
             sender,
             content,
+            image,
             chat,
           });
         }
@@ -92,6 +93,7 @@ io.on("connection", (socket) => {
         socket.to(receiverID).emit("message received", {
           sender,
           content,
+          image,
           chat,
         });
       }
