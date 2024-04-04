@@ -1,10 +1,10 @@
 {
-  "name": "lets-talk",
+  "name": "chatty",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start":"node backend/server.js",
+    "start":"node server.js",
     "dev": "nodemon backend/server.js"
   },
   "author": "",
