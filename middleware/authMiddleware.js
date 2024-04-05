@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/usersModel.js");
+const User = require("../models/UsersModel.js");
 const asyncHandler = require("express-async-handler");
 const { model } = require("mongoose");
 
@@ -26,4 +26,4 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = {protect};
+module.exports = { protect };
