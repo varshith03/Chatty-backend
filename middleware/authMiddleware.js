@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/UsersModel.js");
+const User = require("../models/Users.model.js");
 const asyncHandler = require("express-async-handler");
 const { model } = require("mongoose");
 
